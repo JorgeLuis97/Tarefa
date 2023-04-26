@@ -7,6 +7,7 @@ conn = pyodbc.connect('Driver={SQL Server};'
                       'Database=Teste;'
                       'Trusted_Connection=yes;')
 
+
 # criar a janela principal
 root = Tk()
 root.title("Lista de Tarefas")
