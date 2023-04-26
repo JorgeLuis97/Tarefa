@@ -67,7 +67,7 @@ listbox.pack(side=TOP, pady=5)
 
 # carregar as tarefas da tabela do banco de dados na Listbox
 cursor_6 = conn.cursor()
-cursor_6.execute('SELECT * FROM Tarefa WHERE Tarefa_Completa = 0')
+cursor_6.execute('SELECT * FROM Tarefa WHERE Tarefa_Completa = 0 OR Tarefa_Completa IS NULL;')
 rows = cursor_6.fetchall()
 for row in rows:
     listbox.insert(END, row[0])
@@ -83,7 +83,7 @@ frame_ListCompleta.pack(side=RIGHT)
 label = Label(frame_ListCompleta, text="Completo:")
 label.pack(side=TOP, padx=5)
 
-listboxCompleta = Listbox(frame_ListCompleta, width=40)
+listboxCompleta = Listbox(frame_ListCompleta, width=50)
 listboxCompleta.pack(side=TOP, pady=5)
 
 # carregar as tarefas da tabela do banco de dados na ListboxCompleta
@@ -171,7 +171,7 @@ button_remove = Button(frame_Lista, text="Remover", width=10, command=remove_tas
 button_remove.pack(side=RIGHT, padx=5)
 
 
-def remove_task_completa():
+def return_task_completa():
     global conn
     # Obter a seleção atual da listbox
     selection = listboxCompleta.curselection()
@@ -186,19 +186,23 @@ def remove_task_completa():
                               'Database=Teste;'
                               'Trusted_Connection=yes;')
 
-        # Executar a query de exclusão
+        # Executar a query de atualização
         cursor_5 = conn.cursor()
-        cursor_5.execute('DELETE FROM Tarefa WHERE Tarefa_ListBox = ? AND Tarefa_Completa = 1', task)
+        cursor_5.execute('UPDATE Tarefa SET Tarefa_Completa = ? WHERE Tarefa_ListBox = ?', (0, task))
         conn.commit()
 
         # Fechar a conexão com o banco de dados
         conn.close()
 
-        # Remover a linha selecionada da listbox
+        # Adicionar a tarefa na listbox principal
+        listbox.insert(END, task)
+
+        # Remover a linha selecionada da listbox completa
         listboxCompleta.delete(selection)
 
 
-button_remove = Button(frame_ListCompleta, text="Remover", width=10, command=remove_task)
-button_remove.pack(side=RIGHT, padx=5)
+button_add = Button(frame_ListCompleta, text="Retornar", width=10, command=return_task_completa)
+button_add.pack(side=RIGHT, padx=5)
+
 
 root.mainloop()
